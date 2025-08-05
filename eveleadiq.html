@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Sprint Planner</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- jsPDF library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a202c;
+            /* Dark background */
+            color: #e2e8f0;
+            /* Light text color */
+        }
+
+        .container {
+            max-width: 960px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            background-color: rgba(45, 55, 72, 0.7);
+            /* Slightly lighter dark, semi-transparent for glassy look */
+            border: 1px solid rgba(3, 205, 201, 0.7);
+            /* Semi-transparent teal border */
+            color: #e2e8f0;
+            /* Text color inside inputs */
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            /* Rounded corners */
+            width: 100%;
+            box-sizing: border-box;
+            /* Include padding and border in the element's total width and height */
+            transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #08ABF1;
+            /* Vibrant blue on focus */
+            box-shadow: 0 0 0 3px rgba(8, 171, 241, 0.3);
+            /* Blue glow on focus */
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+            /* Allow vertical resizing */
+        }
+
+        .form-section {
+            background: linear-gradient(135deg, rgba(45, 55, 72, 0.8), rgba(30, 40, 50, 0.8));
+            /* Glassy dark gradient */
+            border: 1px solid rgba(3, 205, 201, 0.5);
+            /* Semi-transparent teal border */
+            border-radius: 0.75rem;
+            /* More rounded corners for sections */
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 20px rgba(8, 171, 241, 0.2);
+            /* Stronger shadow with blue glow */
+            backdrop-filter: blur(5px);
+            /* Glassy blur effect (modern browsers) */
+            -webkit-backdrop-filter: blur(5px);
+            /* Safari support */
+        }
+
+        .section-title {
+            color: #08ABF1;
+            /* Vibrant blue from user's colors for titles */
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #cbd5e0;
+            /* Slightly darker light text for labels */
+        }
+
+        .submit-button {
+            background: linear-gradient(45deg, #08ABF1, #03CDC9);
+            /* Gradient button color */
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 15px rgba(8, 171, 241, 0.4);
+            /* Glow effect */
+            border: none;
+            /* Remove default border */
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            /* Slight lift effect */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2), 0 0 25px rgba(8, 171, 241, 0.6);
+            /* More pronounced glow */
+        }
+
+        .checkbox-group label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 1.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            /* Override full width for checkboxes */
+            margin-right: 0.5rem;
+            appearance: none;
+            /* Hide default checkbox */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #03CDC9;
+            /* Teal border for custom checkbox */
+            border-radius: 0.25rem;
+            background-color: #2d3748;
+            transition: all 0.2s ease-in-out;
+            flex-shrink: 0;
+            /* Prevent shrinking */
+        }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background-color: #04F2A3;
+            /* Bright green from user's colors when checked */
+            border-color: #04F2A3;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked::before {
+            content: '✓';
+            /* Checkmark */
+            display: block;
+            color: white;
+            font-size: 0.8rem;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+            font-size: 1.5rem;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #08ABF1;
+            /* Spinner color matching primary accent */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .header-logo {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-logo img {
+            max-width: 200px;
+            /* Adjust size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto p-4 sm:p-8">
+        <!-- Logo at the top left -->
+        <div class="header-logo">
+            <img src="everlead logo.png" alt="EverLead IQ Logo">
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-8 text-white">Strategic Sprint Planner</h1>
+        <p class="text-center text-lg mb-12 text-gray-400">Use this 90-day planner to reconnect with purpose, reset your
+            focus, and lead with clarity.</p>
+
+        <form id="sprintForm" class="space-y-8">
+            <!-- 1. Strategic Anchor -->
+            <div class="form-section">
+                <h2 class="section-title">1. Strategic Anchor</h2>
+                <div class="mb-6">
+                    <label for="strategicAnchor_whatBuilding" class="label">What are you building and why does it
+                        matter?</label>
+                    <textarea id="strategicAnchor_whatBuilding" name="strategicAnchor_whatBuilding" rows="3"
+                        class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_90DaysMeaningful" class="label">What must be true 90 days from now for
+                        this quarter to feel meaningful?</label>
+                    <textarea id="strategicAnchor_90DaysMeaningful" name="strategicAnchor_90DaysMeaningful" rows="3"
+                        class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_legacyAlignment" class="label">Legacy alignment check-in:</label>
+                    <textarea id="strategicAnchor_legacyAlignment" name="strategicAnchor_legacyAlignment" rows="3"
+                        class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_maturityLevel" class="label">Organizational maturity level:</label>
+                    <select id="strategicAnchor_maturityLevel" name="strategicAnchor_maturityLevel" class="w-full">
+                        <option value="">Select one</option>
+                        <option value="Startup">Startup</option>
+                        <option value="Growth">Growth</option>
+                        <option value="Mature">Mature</option>
+                        <option value="Succession">Succession</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="strategicAnchor_opportunities" class="label">Sector/system opportunities to
+                        watch:</label>
+                    <textarea id="strategicAnchor_opportunities" name="strategicAnchor_opportunities" rows="3"
+                        class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 2. Outcomes That Matter -->
+            <div class="form-section">
+                <h2 class="section-title">2. Outcomes That Matter</h2>
+                <!-- Outcome 1 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 1</h3>
+                    <div class="mb-4">
+                        <label for="outcome1_name" class="label">Outcome 1:</label>
+                        <input type="text" id="outcome1_name" name="outcome1_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome1_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome1_whyMatters" name="outcome1_whyMatters" rows="2"
+                            class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome1_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Risk-Reducing">
+                                Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Capacity-Building">
+                                Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Value-Creating">
+                                Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outcome 2 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 2</h3>
+                    <div class="mb-4">
+                        <label for="outcome2_name" class="label">Outcome 2:</label>
+                        <input type="text" id="outcome2_name" name="outcome2_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome2_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome2_whyMatters" name="outcome2_whyMatters" rows="2"
+                            class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome2_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Risk-Reducing">
+                                Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Capacity-Building">
+                                Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Value-Creating">
+                                Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outcome 3 -->
+                <div class="p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 3</h3>
+                    <div class="mb-4">
+                        <label for="outcome3_name" class="label">Outcome 3:</label>
+                        <input type="text" id="outcome3_name" name="outcome3_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome3_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome3_whyMatters" name="outcome3_whyMatters" rows="2"
+                            class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome3_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Risk-Reducing">
+                                Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Capacity-Building">
+                                Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Value-Creating">
+                                Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Critical Decisions -->
+            <div class="form-section">
+                <h2 class="section-title">3. Critical Decisions</h2>
+                <p class="text-gray-400 mb-6">For each outcome, list key decisions:</p>
+                <!-- Decision 1 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Decision 1</h3>
+                    <div class="mb-4">
+                        <label for="decision1_name" class="label">Decision 1:</label>
+                        <input type="text" id="decision1_name" name="decision1_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision1_owner" class="label">Owner:</label>
+                        <input type="text" id="decision1_owner" name="decision1_owner" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision1_costOfDelay" class="label">Cost of delay:</label>
+                        <input type="text" id="decision1_costOfDelay" name="decision1_costOfDelay" class="w-full">
+                    </div>
+                    <div>
+                        <label for="decision1_consensusConviction" class="label">Consensus or conviction?</label>
+                        <input type="text" id="decision1_consensusConviction" name="decision1_consensusConviction"
+                            class="w-full">
+                    </div>
+                </div>
+                <!-- Decision 2 -->
+                <div class="p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Decision 2</h3>
+                    <div class="mb-4">
+                        <label for="decision2_name" class="label">Decision 2:</label>
+                        <input type="text" id="decision2_name" name="decision2_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision2_owner" class="label">Owner:</label>
+                        <input type="text" id="decision2_owner" name="decision2_owner" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision2_costOfDelay" class="label">Cost of delay:</label>
+                        <input type="text" id="decision2_costOfDelay" name="decision2_costOfDelay" class="w-full">
+                    </div>
+                    <div>
+                        <label for="decision2_consensusConviction" class="label">Consensus or conviction?</label>
+                        <input type="text" id="decision2_consensusConviction" name="decision2_consensusConviction"
+                            class="w-full">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Tactical Path & Guardrails -->
+            <div class="form-section">
+                <h2 class="section-title">4. Tactical Path & Guardrails</h2>
+                <p class="text-gray-400 mb-6">Key actions to deliver progress (3-5 per outcome):</p>
+                <div class="mb-4">
+                    <label for="action1" class="label">Action 1:</label>
+                    <input type="text" id="action1" name="action1" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action2" class="label">Action 2:</label>
+                    <input type="text" id="action2" name="action2" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action3" class="label">Action 3:</label>
+                    <input type="text" id="action3" name="action3" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action4" class="label">Action 4:</label>
+                    <input type="text" id="action4" name="action4" class="w-full">
+                </div>
+                <div class="mb-6">
+                    <label for="action5" class="label">Action 5:</label>
+                    <input type="text" id="action5" name="action5" class="w-full">
+                </div>
+                <div class="mb-6">
+                    <label for="sayNo" class="label">What will you say 'no' to this quarter to stay focused?</label>
+                    <textarea id="sayNo" name="sayNo" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="resourcesPermissions" class="label">What resources or permissions do you need?</label>
+                    <textarea id="resourcesPermissions" name="resourcesPermissions" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 5. Weekly Traction Pulse -->
+            <div class="form-section">
+                <h2 class="section-title">5. Weekly Traction Pulse (Repeat Weekly)</h2>
+                <div class="mb-6">
+                    <label for="movedForward" class="label">What moved forward this week?</label>
+                    <textarea id="movedForward" name="movedForward" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="stalledWhy" class="label">What stalled - and why?</label>
+                    <textarea id="stalledWhy" name="stalledWhy" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="reinforcementReallocationRemoval" class="label">What needs reinforcement, reallocation,
+                        or removal?</label>
+                    <textarea id="reinforcementReallocationRemoval" name="reinforcementReallocationRemoval" rows="3"
+                        class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 6. Leadership Reflection Journal -->
+            <div class="form-section">
+                <h2 class="section-title">6. Leadership Reflection Journal (End of Quarter)</h2>
+                <div class="mb-6">
+                    <label for="learnedAboutLeadership" class="label">What did I learn about my leadership?</label>
+                    <textarea id="learnedAboutLeadership" name="learnedAboutLeadership" rows="3"
+                        class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="surprisedByDecisionMaking" class="label">What surprised me about my
+                        decision-making?</label>
+                    <textarea id="surprisedByDecisionMaking" name="surprisedByDecisionMaking" rows="3"
+                        class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="carryForward" class="label">What do I want to carry forward?</label>
+                    <textarea id="carryForward" name="carryForward" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="letGoOf" class="label">What must I let go of?</label>
+                    <textarea id="letGoOf" name="letGoOf" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="submit-button">Generate Report PDF</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>Generating PDF...</p>
+    </div>
+
+    <script>
+        // Ensure jsPDF is loaded before use
+        const { jsPDF } = window.jspdf;
+
+        document.getElementById('sprintForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('hidden'); // Show loading overlay
+
+            // Collect all form data
+            const formData = new FormData(event.target);
+            const data = {};
+
+            for (let [key, value] of formData.entries()) {
+                // Handle checkbox groups separately
+                if (key.endsWith('_type')) {
+                    if (!data[key]) {
+                        data[key] = [];
+                    }
+                    data[key].push(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            // Function to generate PDF
+            async function generatePdfReport(formData) {
+                const doc = new jsPDF();
+                let yPos = 20; // Initial Y position for content
+                const margin = 20;
+                const lineHeight = 10; // Standard line height for text
+
+                // Font sizes
+                const mainTitleSize = 24;
+                const sectionTitleSize = 18;
+                const subSectionTitleSize = 14;
+                const questionSize = 12;
+                const answerSize = 10;
+
+                // Spacing constants
+                const gapAfterMainTitle = 15;
+                const gapAfterSubtitle = 20;
+                const gapAfterSectionTitle = 15;
+                const gapAfterSubSectionTitle = 10;
+                const gapBetweenQuestionAndAnswer = 2; // Further reduced spacing here
+                const gapAfterAnswerBlock = 8; // Also slightly reduced
+
+
+                // Function to add a new page with dark background
+                const addNewPage = () => {
+                    doc.addPage();
+                    yPos = margin; // Reset yPos for new page
+                    // Set dark background for the new page
+                    doc.setFillColor(26, 32, 44); // Corresponds to #1a202c
+                    doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
+                };
+
+                // Add the initial page background
+                doc.setFillColor(26, 32, 44); // Corresponds to #1a202c
+                doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, 'F');
+
+
+                // Add Logo to PDF
+                const img = new Image();
+                img.src = 'http://googleusercontent.com/file_content/1'; // URL for the uploaded logo
+                img.onerror = () => {
+                    console.error("Failed to load image for PDF. Using fallback text.");
+                    // Fallback if image fails to load
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(16);
+                    doc.setTextColor('#08ABF1'); // Use one of the provided colors
+                    doc.text('EVERLEAD IQ', margin, yPos);
+                    yPos += 10;
+                    addPdfContent(); // Continue with PDF content generation
+                };
+                img.onload = () => {
+                    const imgWidth = 50; // Desired width in PDF units
+                    const imgHeight = (img.height * imgWidth) / img.width; // Maintain aspect ratio
+
+                    // Ensure there's space for the logo and title on the current page
+                    if (yPos + imgHeight + mainTitleSize + gapAfterMainTitle + 10 > doc.internal.pageSize.height - margin) {
+                        addNewPage(); // Add new page if not enough space
+                    }
+
+                    doc.addImage(img, 'PNG', margin, yPos, imgWidth, imgHeight);
+                    yPos += imgHeight + 10; // Space after logo
+
+                    addPdfContent(); // Continue with PDF content generation
+                };
+
+                // Function to add the rest of the PDF content
+                function addPdfContent() {
+                    // Main Title
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(mainTitleSize);
+                    doc.setTextColor('#08ABF1'); // Use vibrant blue for main title
+                    doc.text('Strategic Sprint Planner Report', margin, yPos);
+                    yPos += gapAfterMainTitle;
+
+                    // Subtitle
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(12);
+                    doc.setTextColor('#e2e8f0'); // Light text color for subtitle
+                    doc.text('Your 90-Day Strategic Sprint Summary', margin, yPos);
+                    yPos += gapAfterSubtitle;
+
+                    // Helper to add a main section header (e.g., "1. Strategic Anchor")
+                    const addSectionHeader = (title) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(sectionTitleSize);
+                        doc.setTextColor('#08ABF1');
+                        const lines = doc.splitTextToSize(title, 170);
+                        const heightNeeded = (lines.length * lineHeight) + gapAfterSectionTitle;
+
+                        if (yPos + heightNeeded > doc.internal.pageSize.height - margin) {
+                            addNewPage();
+                        }
+                        doc.text(lines, margin, yPos);
+                        yPos += (lines.length * lineHeight) + gapAfterSectionTitle;
+                    };
+
+                    // Helper to add a sub-section header (e.g., "Outcome 1: [Name]")
+                    const addSubSectionHeader = (title) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(subSectionTitleSize);
+                        doc.setTextColor('#08ABF1');
+                        const lines = doc.splitTextToSize(title, 170);
+                        const heightNeeded = (lines.length * lineHeight) + gapAfterSubSectionTitle;
+
+                        if (yPos + heightNeeded > doc.internal.pageSize.height - margin) {
+                            addNewPage();
+                        }
+                        doc.text(lines, margin, yPos);
+                        yPos += (lines.length * lineHeight) + gapAfterSubSectionTitle;
+                    };
+
+                    // Helper to add a question and its answer
+                    const addQuestionAnswer = (question, answer) => {
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(questionSize);
+                        doc.setTextColor('#03CDC9');
+                        const questionLines = doc.splitTextToSize(question, 170);
+                        const questionHeight = questionLines.length * lineHeight;
+
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(answerSize);
+                        doc.setTextColor('#e2e8f0');
+                        const answerLines = doc.splitTextToSize(answer || 'N/A', 165); // Indent answers by 5 units
+                        const answerHeight = answerLines.length * lineHeight;
+
+                        const heightNeeded = questionHeight + gapBetweenQuestionAndAnswer + answerHeight + gapAfterAnswerBlock;
+
+                        if (yPos + heightNeeded > doc.internal.pageSize.height - margin) {
+                            addNewPage();
+                        }
+
+                        // Draw question
+                        doc.setFont('helvetica', 'bold');
+                        doc.setFontSize(questionSize);
+                        doc.setTextColor('#03CDC9');
+                        doc.text(questionLines, margin, yPos);
+                        yPos += questionHeight + gapBetweenQuestionAndAnswer;
+
+                        // Draw answer
+                        doc.setFont('helvetica', 'normal');
+                        doc.setFontSize(answerSize);
+                        doc.setTextColor('#e2e8f0');
+                        doc.text(answerLines, margin + 5, yPos); // Indent answers slightly
+                        yPos += answerHeight + gapAfterAnswerBlock;
+                    };
+
+                    // 1. Strategic Anchor
+                    addSectionHeader('1. Strategic Anchor');
+                    addQuestionAnswer('What are you building and why does it matter?', formData.strategicAnchor_whatBuilding);
+                    addQuestionAnswer('What must be true 90 days from now for this quarter to feel meaningful?', formData.strategicAnchor_90DaysMeaningful);
+                    addQuestionAnswer('Legacy alignment check-in:', formData.strategicAnchor_legacyAlignment);
+                    addQuestionAnswer('Organizational maturity level:', formData.strategicAnchor_maturityLevel);
+                    addQuestionAnswer('Sector/system opportunities to watch:', formData.strategicAnchor_opportunities);
+
+                    // 2. Outcomes That Matter
+                    addSectionHeader('2. Outcomes That Matter');
+                    for (let i = 1; i <= 3; i++) {
+                        const outcomeName = formData[`outcome${i}_name`];
+                        const whyMatters = formData[`outcome${i}_whyMatters`];
+                        const outcomeTypes = formData[`outcome${i}_type`] ? formData[`outcome${i}_type`].join(', ') : 'N/A';
+
+                        if (outcomeName) {
+                            addSubSectionHeader(`Outcome ${i}: ${outcomeName}`);
+                            addQuestionAnswer('Why it matters:', whyMatters);
+                            addQuestionAnswer('Is it:', outcomeTypes);
+                        }
+                    }
+
+                    // 3. Critical Decisions
+                    addSectionHeader('3. Critical Decisions');
+                    for (let i = 1; i <= 2; i++) {
+                        const decisionName = formData[`decision${i}_name`];
+                        const owner = formData[`decision${i}_owner`];
+                        const costOfDelay = formData[`decision${i}_costOfDelay`];
+                        const consensusConviction = formData[`decision${i}_consensusConviction`];
+
+                        if (decisionName) {
+                            addSubSectionHeader(`Decision ${i}: ${decisionName}`);
+                            addQuestionAnswer('Owner:', owner);
+                            addQuestionAnswer('Cost of delay:', costOfDelay);
+                            addQuestionAnswer('Consensus or conviction?:', consensusConviction);
+                        }
+                    }
+
+                    // 4. Tactical Path & Guardrails
+                    addSectionHeader('4. Tactical Path & Guardrails');
+                    for (let i = 1; i <= 5; i++) {
+                        const action = formData[`action${i}`];
+                        if (action) {
+                            addQuestionAnswer(`Action ${i}:`, action);
+                        }
+                    }
+                    addQuestionAnswer('What will you say \'no\' to this quarter to stay focused?', formData.sayNo);
+                    addQuestionAnswer('What resources or permissions do you need?', formData.resourcesPermissions);
+
+                    // 5. Weekly Traction Pulse
+                    addSectionHeader('5. Weekly Traction Pulse (Repeat Weekly)');
+                    addQuestionAnswer('What moved forward this week?', formData.movedForward);
+                    addQuestionAnswer('What stalled - and why?', formData.stalledWhy);
+                    addQuestionAnswer('What needs reinforcement, reallocation, or removal?', formData.reinforcementReallocationRemoval);
+
+                    // 6. Leadership Reflection Journal
+                    addSectionHeader('6. Leadership Reflection Journal (End of Quarter)');
+                    addQuestionAnswer('What did I learn about my leadership?', formData.learnedAboutLeadership);
+                    addQuestionAnswer('What surprised me about my decision-making?', formData.surprisedByDecisionMaking);
+                    addQuestionAnswer('What do I want to carry forward?', formData.carryForward);
+                    addQuestionAnswer('What must I let go of?', formData.letGoOf);
+
+                    doc.save('Strategic_Sprint_Report.pdf');
+                    loadingOverlay.classList.add('hidden'); // Hide loading overlay
+                }
+            }
+
+            // Simulate a delay for PDF generation (remove in production if not needed)
+            setTimeout(() => {
+                generatePdfReport(data);
+            }, 1000); // 1 second delay
+        });
+    </script>
+</body>
+
+</html>
