@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strategic Sprint Planner</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Inter font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link to your custom CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="p-4 sm:p-8">
+    <div class="container mx-auto p-4 sm:p-8">
+        <!-- Logo at the top left -->
+        <div class="header-logo">
+            <img src="everlead logo.png" alt="EverLead IQ Logo">
+        </div>
+
+        <h1 class="text-3xl sm:text-4xl font-bold text-center mb-8 text-white">Strategic Sprint Planner</h1>
+        <p class="text-center text-lg mb-12 text-gray-400">Use this 90-day planner to reconnect with purpose, reset your focus, and lead with clarity.</p>
+
+        <form id="sprintForm" class="space-y-8">
+            <!-- 1. Strategic Anchor -->
+            <div class="form-section">
+                <h2 class="section-title">1. Strategic Anchor</h2>
+                <div class="mb-6">
+                    <label for="strategicAnchor_whatBuilding" class="label">What are you building and why does it matter?</label>
+                    <textarea id="strategicAnchor_whatBuilding" name="strategicAnchor_whatBuilding" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_90DaysMeaningful" class="label">What must be true 90 days from now for this quarter to feel meaningful?</label>
+                    <textarea id="strategicAnchor_90DaysMeaningful" name="strategicAnchor_90DaysMeaningful" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_legacyAlignment" class="label">Legacy alignment check-in:</label>
+                    <textarea id="strategicAnchor_legacyAlignment" name="strategicAnchor_legacyAlignment" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="strategicAnchor_maturityLevel" class="label">Organizational maturity level:</label>
+                    <select id="strategicAnchor_maturityLevel" name="strategicAnchor_maturityLevel" class="w-full">
+                        <option value="">Select one</option>
+                        <option value="Startup">Startup</option>
+                        <option value="Growth">Growth</option>
+                        <option value="Mature">Mature</option>
+                        <option value="Succession">Succession</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="strategicAnchor_opportunities" class="label">Sector/system opportunities to watch:</label>
+                    <textarea id="strategicAnchor_opportunities" name="strategicAnchor_opportunities" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 2. Outcomes That Matter -->
+            <div class="form-section">
+                <h2 class="section-title">2. Outcomes That Matter</h2>
+                <!-- Outcome 1 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 1</h3>
+                    <div class="mb-4">
+                        <label for="outcome1_name" class="label">Outcome 1:</label>
+                        <input type="text" id="outcome1_name" name="outcome1_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome1_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome1_whyMatters" name="outcome1_whyMatters" rows="2" class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome1_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Risk-Reducing"> Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Capacity-Building"> Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome1_type" value="Value-Creating"> Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outcome 2 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 2</h3>
+                    <div class="mb-4">
+                        <label for="outcome2_name" class="label">Outcome 2:</label>
+                        <input type="text" id="outcome2_name" name="outcome2_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome2_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome2_whyMatters" name="outcome2_whyMatters" rows="2" class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome2_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Risk-Reducing"> Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Capacity-Building"> Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome2_type" value="Value-Creating"> Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outcome 3 -->
+                <div class="p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Outcome 3</h3>
+                    <div class="mb-4">
+                        <label for="outcome3_name" class="label">Outcome 3:</label>
+                        <input type="text" id="outcome3_name" name="outcome3_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="outcome3_whyMatters" class="label">Why it matters:</label>
+                        <textarea id="outcome3_whyMatters" name="outcome3_whyMatters" rows="2" class="w-full"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <span class="label">Is it:</span>
+                        <div class="checkbox-group flex flex-wrap mt-2">
+                            <label><input type="checkbox" name="outcome3_type" value="Strategic"> Strategic</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Risk-Reducing"> Risk-Reducing</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Capacity-Building"> Capacity-Building</label>
+                            <label><input type="checkbox" name="outcome3_type" value="Value-Creating"> Value-Creating</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Critical Decisions -->
+            <div class="form-section">
+                <h2 class="section-title">3. Critical Decisions</h2>
+                <p class="text-gray-400 mb-6">For each outcome, list key decisions:</p>
+                <!-- Decision 1 -->
+                <div class="mb-8 p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Decision 1</h3>
+                    <div class="mb-4">
+                        <label for="decision1_name" class="label">Decision 1:</label>
+                        <input type="text" id="decision1_name" name="decision1_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision1_owner" class="label">Owner:</label>
+                        <input type="text" id="decision1_owner" name="decision1_owner" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision1_costOfDelay" class="label">Cost of delay:</label>
+                        <input type="text" id="decision1_costOfDelay" name="decision1_costOfDelay" class="w-full">
+                    </div>
+                    <div>
+                        <label for="decision1_consensusConviction" class="label">Consensus or conviction?</label>
+                        <input type="text" id="decision1_consensusConviction" name="decision1_consensusConviction" class="w-full">
+                    </div>
+                </div>
+                <!-- Decision 2 -->
+                <div class="p-4 border border-gray-600 rounded-lg">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-300">Decision 2</h3>
+                    <div class="mb-4">
+                        <label for="decision2_name" class="label">Decision 2:</label>
+                        <input type="text" id="decision2_name" name="decision2_name" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision2_owner" class="label">Owner:</label>
+                        <input type="text" id="decision2_owner" name="decision2_owner" class="w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label for="decision2_costOfDelay" class="label">Cost of delay:</label>
+                        <input type="text" id="decision2_costOfDelay" name="decision2_costOfDelay" class="w-full">
+                    </div>
+                    <div>
+                        <label for="decision2_consensusConviction" class="label">Consensus or conviction?</label>
+                        <input type="text" id="decision2_consensusConviction" name="decision2_consensusConviction" class="w-full">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Tactical Path & Guardrails -->
+            <div class="form-section">
+                <h2 class="section-title">4. Tactical Path & Guardrails</h2>
+                <p class="text-gray-400 mb-6">Key actions to deliver progress (3-5 per outcome):</p>
+                <div class="mb-4">
+                    <label for="action1" class="label">Action 1:</label>
+                    <input type="text" id="action1" name="action1" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action2" class="label">Action 2:</label>
+                    <input type="text" id="action2" name="action2" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action3" class="label">Action 3:</label>
+                    <input type="text" id="action3" name="action3" class="w-full">
+                </div>
+                <div class="mb-4">
+                    <label for="action4" class="label">Action 4:</label>
+                    <input type="text" id="action4" name="action4" class="w-full">
+                </div>
+                <div class="mb-6">
+                    <label for="action5" class="label">Action 5:</label>
+                    <input type="text" id="action5" name="action5" class="w-full">
+                </div>
+                <div class="mb-6">
+                    <label for="sayNo" class="label">What will you say 'no' to this quarter to stay focused?</label>
+                    <textarea id="sayNo" name="sayNo" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="resourcesPermissions" class="label">What resources or permissions do you need?</label>
+                    <textarea id="resourcesPermissions" name="resourcesPermissions" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 5. Weekly Traction Pulse -->
+            <div class="form-section">
+                <h2 class="section-title">5. Weekly Traction Pulse (Repeat Weekly)</h2>
+                <div class="mb-6">
+                    <label for="movedForward" class="label">What moved forward this week?</label>
+                    <textarea id="movedForward" name="movedForward" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="stalledWhy" class="label">What stalled - and why?</label>
+                    <textarea id="stalledWhy" name="stalledWhy" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="reinforcementReallocationRemoval" class="label">What needs reinforcement, reallocation, or removal?</label>
+                    <textarea id="reinforcementReallocationRemoval" name="reinforcementReallocationRemoval" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <!-- 6. Leadership Reflection Journal -->
+            <div class="form-section">
+                <h2 class="section-title">6. Leadership Reflection Journal (End of Quarter)</h2>
+                <div class="mb-6">
+                    <label for="learnedAboutLeadership" class="label">What did I learn about my leadership?</label>
+                    <textarea id="learnedAboutLeadership" name="learnedAboutLeadership" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="surprisedByDecisionMaking" class="label">What surprised me about my decision-making?</label>
+                    <textarea id="surprisedByDecisionMaking" name="surprisedByDecisionMaking" rows="3" class="w-full"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="carryForward" class="label">What do I want to carry forward?</label>
+                    <textarea id="carryForward" name="carryForward" rows="3" class="w-full"></textarea>
+                </div>
+                <div>
+                    <label for="letGoOf" class="label">What must I let go of?</label>
+                    <textarea id="letGoOf" name="letGoOf" rows="3" class="w-full"></textarea>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="submit-button">Generate Report PDF</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+        <p>Generating PDF...</p>
+    </div>
+
+    <!-- Link to your custom JavaScript file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
