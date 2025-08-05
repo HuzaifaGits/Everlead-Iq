@@ -39,11 +39,11 @@ document.getElementById('sprintForm').addEventListener('submit', function(event)
 
         // Spacing constants
         const gapAfterMainTitle = 15;
-        const gapAfterSubtitle = 20;
-        const gapAfterSectionTitle = 15;
+        const gapAfterSubtitle = 15;
+        const gapAfterSectionTitle = 10;
         const gapAfterSubSectionTitle = 10;
-        const gapBetweenQuestionAndAnswer = 2; // Further reduced spacing here
-        const gapAfterAnswerBlock = 8; // Also slightly reduced
+        const gapBetweenQuestionAndAnswer = 1; // Further reduced spacing here
+        const gapAfterAnswerBlock = 2; // Also slightly reduced
 
 
         // Function to add a new page with dark background
@@ -241,3 +241,4 @@ document.getElementById('sprintForm').addEventListener('submit', function(event)
         generatePdfReport(data);
     }, 1000); // 1 second delay
 });
+
