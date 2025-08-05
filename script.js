@@ -28,7 +28,7 @@ document.getElementById('sprintForm').addEventListener('submit', function(event)
         const doc = new jsPDF();
         let yPos = 20; // Initial Y position for content
         const margin = 20;
-        const lineHeight = 10; // Standard line height for text
+        const lineHeight = 7; // Standard line height for text
 
         // Font sizes
         const mainTitleSize = 24;
@@ -43,7 +43,7 @@ document.getElementById('sprintForm').addEventListener('submit', function(event)
         const gapAfterSectionTitle = 8;
         const gapAfterSubSectionTitle = 5;
         const gapBetweenQuestionAndAnswer = 0.5; // Further reduced spacing here
-        const gapAfterAnswerBlock = 1; // Also slightly reduced
+        const gapAfterAnswerBlock = 0; // Also slightly reduced
 
 
         // Function to add a new page with dark background
@@ -241,5 +241,6 @@ document.getElementById('sprintForm').addEventListener('submit', function(event)
         generatePdfReport(data);
     }, 1000); // 1 second delay
 });
+
 
 
